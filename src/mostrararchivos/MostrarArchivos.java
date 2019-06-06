@@ -57,14 +57,13 @@ public class MostrarArchivos {
             
             String linea;
             while ((linea = br.readLine( )) != null) {
-                String palabras[] = linea.split("[, .;:¿?!¡/]+");
+                String palabras[] = linea.split("[^a-zA-Z0-9]+");
                 for (String palabra : palabras) {
                     if (palabra.equals(palabraBuscada)) {
                         return true;
                     }
                 }
             }
-            System.out.println("");
         } catch (FileNotFoundException ex) {
             ex.printStackTrace( );
         } catch (IOException e) {
