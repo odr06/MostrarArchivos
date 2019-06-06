@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class MostrarArchivos {
@@ -34,7 +35,7 @@ public class MostrarArchivos {
     public static String[] listarArchivos(String ruta) {
         File carpeta = new File(ruta);
         String[] lista = carpeta.list( );
-        
+        Arrays.sort(lista);
         return lista;
     }
     
