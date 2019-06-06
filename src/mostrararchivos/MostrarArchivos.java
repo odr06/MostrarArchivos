@@ -1,5 +1,6 @@
 package mostrararchivos;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +22,8 @@ public class MostrarArchivos {
         ArrayList<String> listaFiltrada = filtrarArchivos(palabra, lista, ruta);
         if (!listaFiltrada.isEmpty( )) {
             mostrarLista(listaFiltrada);
+            int opcion = sc.nextInt( );
+            abrirArchivo(listaFiltrada, opcion, ruta);
         } else {
             System.out.println("No se encontraron archivos con la palabra buscada.");
         }
@@ -77,8 +80,22 @@ public class MostrarArchivos {
     public static void mostrarLista(ArrayList<String> lista) {
         if (!lista.isEmpty( )) {
             for (int i = 0; i < lista.size( ); ++i) {
-                System.out.println("Archivo: " + lista.get(i));
+                System.out.println(i + ") " + lista.get(i));
             }
+        }
+        System.out.println("\nIngrese el índice del documento que desea abrir:");
+    }
+
+    public static void abrirArchivo(ArrayList<String> listaFiltrada, int opcion, String ruta) {
+        if (opcion < 0 || opcion > listaFiltrada.size( )) {
+            System.out.println("Opcion no valida");
+        }
+        
+        try {
+            File archivo = new File(ruta + "/" + listaFiltrada.get(opcion));
+            Desktop.getDesktop().open(archivo);
+        } catch (IOException ex) {
+            ex.printStackTrace( );
         }
     }
     
