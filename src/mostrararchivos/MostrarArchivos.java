@@ -9,7 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -18,14 +20,15 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 public class MostrarArchivos {
 
-    public static void main(String[] args) {        
+    public static void main(String[] args) {  
         Scanner sc = new Scanner(System.in);
-        System.out.println("Que palabra desea buscar?");
-        String palabra = sc.next( );
+        System.out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
+        String linea = sc.nextLine( );
+        String[] palabras = linea.split(" ");
         
         String ruta = determinaRuta( );
         String[] lista = listarArchivos(ruta);
-        ArrayList<String> listaFiltrada = filtrarArchivos(palabra, lista, ruta);
+        ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
         if (!listaFiltrada.isEmpty( )) {
             mostrarLista(listaFiltrada);
             int opcion = sc.nextInt( );
@@ -51,7 +54,7 @@ public class MostrarArchivos {
     }
     
     /* Metodo para filtrar archivos */
-    public static ArrayList<String> filtrarArchivos(String palabraBuscada, String[] lista, String ruta) {
+    public static ArrayList<String> filtrarArchivos(String[] palabraBuscada, String[] lista, String ruta) {
         ArrayList<String> listaFiltrada = new ArrayList<>(lista.length);
         if (lista.length != 0) {
             for (String archivo : lista) {
@@ -80,7 +83,7 @@ public class MostrarArchivos {
     }
     
     /* Metodo para analizar archivos */
-    public static boolean analizaArchivos(String nombre, String ruta, String palabraBuscada) {
+    public static boolean analizaArchivos(String nombre, String ruta, String[] palabraBuscada) {
         int tipo = determinaTipo(nombre, ruta);
         boolean flag = false;
         
@@ -99,18 +102,32 @@ public class MostrarArchivos {
         return flag;
     }
     
+    /* Metodo para llenar el Map "seen" */
+    public static Map<String, Boolean> llenaSeen(String[] palabras) {
+        Map<String, Boolean> res = new HashMap<>( );
+        for(String palabra : palabras) {
+            res.put(palabra, false);
+        }
+        return res;
+    }
+    
     /* Metodo para analizar texto */
-    public static boolean analizaTexto(String nombre, String ruta, String palabraBuscada) {
+    public static boolean analizaTexto(String nombre, String ruta, String[] palabraBuscada) {
+        int contPalabras = 0;
         try {
             FileReader archivo = new FileReader(ruta + "/" + nombre);
             BufferedReader br = new BufferedReader(archivo);
+            
+            Map<String, Boolean> seen = llenaSeen(palabraBuscada);
             
             String linea;
             while ((linea = br.readLine( )) != null) {
                 String palabras[] = linea.split("[^a-zA-Z0-9]+");
                 for (String palabra : palabras) {
-                    if (palabra.equals(palabraBuscada)) {
-                        return true;
+                    palabra = palabra.toLowerCase( );
+                    if (seen.get(palabra) != null && seen.get(palabra) == false) {
+                        seen.put(palabra, true);
+                        contPalabras += 1;
                     }
                 }
             }
@@ -120,23 +137,28 @@ public class MostrarArchivos {
             e.printStackTrace( );
         }
         
-        return false;
+        return (contPalabras == palabraBuscada.length);
     }
     
     /* Metodo para analizar docx */
-    public static boolean analizaDocx(String nombre, String ruta, String palabraBuscada) {
+    public static boolean analizaDocx(String nombre, String ruta, String[] palabraBuscada) {
+        int contPalabras = 0;
         try {
             File archivo = new File(ruta + "/" + nombre);
             FileInputStream fis = new FileInputStream(archivo.getAbsolutePath( ));
             
             XWPFDocument documento = new XWPFDocument(fis);
             
+            Map<String, Boolean> seen = llenaSeen(palabraBuscada);
+            
             List<XWPFParagraph> parrafos = documento.getParagraphs( );
             for (XWPFParagraph parrafo : parrafos) {
                 String[] palabras = parrafo.getText( ).split("[^a-zA-Z0-9]+");
                 for (String palabra : palabras) {
-                    if (palabra.equals(palabraBuscada)) {
-                        return true;
+                    palabra = palabra.toLowerCase( );
+                    if (seen.get(palabra) != null && seen.get(palabra) == false) {
+                        seen.put(palabra, true);
+                        contPalabras += 1;
                     }
                 }
             }
@@ -146,20 +168,24 @@ public class MostrarArchivos {
             ex.printStackTrace( );
         }
         
-        return false;
+        return (contPalabras == palabraBuscada.length);
     }
     
     /* Metodo para analizar pdf */
-    public static boolean analizaPDF(String nombre, String ruta, String palabraBuscada) {
+    public static boolean analizaPDF(String nombre, String ruta, String[] palabraBuscada) {
+        int contPalabras = 0;
         try {
             PDDocument documento = PDDocument.load(new File(ruta + "/" + nombre));
             PDFTextStripper stripper = new PDFTextStripper( );
             String texto = stripper.getText(documento);
             String[] palabras = texto.split("[^a-zA-Z0-9]+");
             
+            Map<String, Boolean> seen = llenaSeen(palabraBuscada);
             for (String palabra : palabras) {
-                if (palabra.equals(palabraBuscada)) {
-                    return true;
+                palabra = palabra.toLowerCase( );
+                if (seen.get(palabra) != null && seen.get(palabra) == false) {
+                    seen.put(palabra, true);
+                    contPalabras += 1;
                 }
             }
             
@@ -168,7 +194,7 @@ public class MostrarArchivos {
             ex.printStackTrace( );
         }
         
-        return false;
+        return (contPalabras == palabraBuscada.length);
     }
     
     /* Metodo para mostrar lista filtrada */
@@ -189,7 +215,7 @@ public class MostrarArchivos {
         
         try {
             File archivo = new File(ruta + "/" + listaFiltrada.get(opcion));
-            Desktop.getDesktop().open(archivo);
+            Desktop.getDesktop( ).open(archivo);
         } catch (IOException ex) {
             ex.printStackTrace( );
         }
