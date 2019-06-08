@@ -117,7 +117,6 @@ public class MostrarArchivos {
         try {
             FileReader archivo = new FileReader(ruta + "/" + nombre);
             BufferedReader br = new BufferedReader(archivo);
-            
             Map<String, Boolean> seen = llenaSeen(palabraBuscada);
             
             String linea;
@@ -146,12 +145,10 @@ public class MostrarArchivos {
         try {
             File archivo = new File(ruta + "/" + nombre);
             FileInputStream fis = new FileInputStream(archivo.getAbsolutePath( ));
-            
             XWPFDocument documento = new XWPFDocument(fis);
-            
             Map<String, Boolean> seen = llenaSeen(palabraBuscada);
-            
             List<XWPFParagraph> parrafos = documento.getParagraphs( );
+            
             for (XWPFParagraph parrafo : parrafos) {
                 String[] palabras = parrafo.getText( ).split("[^a-zA-Z0-9]+");
                 for (String palabra : palabras) {
@@ -179,8 +176,8 @@ public class MostrarArchivos {
             PDFTextStripper stripper = new PDFTextStripper( );
             String texto = stripper.getText(documento);
             String[] palabras = texto.split("[^a-zA-Z0-9]+");
-            
             Map<String, Boolean> seen = llenaSeen(palabraBuscada);
+            
             for (String palabra : palabras) {
                 palabra = palabra.toLowerCase( );
                 if (seen.get(palabra) != null && seen.get(palabra) == false) {
