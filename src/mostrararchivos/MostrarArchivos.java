@@ -74,8 +74,9 @@ public class MostrarArchivos {
             return 1;
         case "docx":
             return 2;
+        default:
+            return 0;
         }
-        return 0;
     }
     
     /* Metodo para analizar archivos */
