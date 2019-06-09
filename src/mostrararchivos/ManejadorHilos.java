@@ -43,9 +43,10 @@ public class ManejadorHilos implements Runnable {
                     Scanner in = new Scanner(secuenciaEntrada);
                     PrintWriter out = new PrintWriter(secuenciaSalida, true);
                     
-                    out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
+                    out.println("Ingrese la(s) palabra(s) desea buscar (separadas por un espacio)");
                     
                     String linea = in.nextLine( );
+                    System.out.println("Palabra(s) a buscar: " + linea);
                     String[] palabras = linea.split(" ");
 
                     String ruta = determinaRuta( );
