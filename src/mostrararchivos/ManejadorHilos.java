@@ -18,7 +18,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-public class MostrarArchivos {
+public class ManejadorHilos {
 
     public static void main(String[] args) {  
         Scanner sc = new Scanner(System.in);
