@@ -16,15 +16,33 @@ public class ClienteHilos {
             
             System.out.println(entrada.nextLine( ));
             boolean sigue = true;
-            while (sigue) {
+            //while (sigue) {
                 String palabra = teclado.nextLine( );
                 salida.println(palabra);
-                System.out.println(entrada.nextLine( ));
                 
-                if (palabra.compareTo("ADIOS") == 0) {
-                    sigue = false;
-                }
-            }
+                int opcion = 1;
+                do {
+                    String tamano = entrada.nextLine( );
+                    int tam = Integer.parseInt(tamano);
+                    for (int k = 0; k < tam; ++k) {
+                        String lineaMenu = entrada.nextLine( );
+                        System.out.println(lineaMenu);
+                    }
+                    
+                    String mensajeOpcion = entrada.nextLine( );
+                    System.out.println(mensajeOpcion);
+
+                    int opcionAbrir = teclado.nextInt( );
+                    salida.println(opcionAbrir);
+                    
+                    String seguirAbriendo = entrada.nextLine( );
+                    String siSeguirAbriendo = entrada.nextLine( );
+                    String noSeguirAbriendo = entrada.nextLine( );
+                    System.out.println(seguirAbriendo + "\n" + siSeguirAbriendo + "\n" + noSeguirAbriendo);
+                    opcion = teclado.nextInt( );
+                    salida.println(opcion);
+                } while (opcion == 1);
+            //}
             
             entrada.close( );
             salida.close( );

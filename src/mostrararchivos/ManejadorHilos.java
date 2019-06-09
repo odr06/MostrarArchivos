@@ -7,6 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,23 +22,59 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-public class ManejadorHilos {
+public class ManejadorHilos implements Runnable {
+    
+    private Socket entrante;
+    private int contador;
+    
+    public ManejadorHilos(Socket i, int c) {
+        entrante = i;
+        contador = c;
+    }
 
-    public static void main(String[] args) {  
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
-        String linea = sc.nextLine( );
-        String[] palabras = linea.split(" ");
-        
-        String ruta = determinaRuta( );
-        String[] lista = listarArchivos(ruta);
-        ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
-        if (!listaFiltrada.isEmpty( )) {
-            mostrarLista(listaFiltrada);
-            int opcion = sc.nextInt( );
-            abrirArchivo(listaFiltrada, opcion, ruta);
-        } else {
-            System.out.println("No se encontraron archivos con la palabra buscada.");
+    public void run( ) {
+        try {
+            try {
+                InputStream secuenciaEntrada = entrante.getInputStream( );
+                OutputStream secuenciaSalida = entrante.getOutputStream( );
+
+                Scanner in = new Scanner(secuenciaEntrada);
+                PrintWriter out = new PrintWriter(secuenciaSalida, true);
+                out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
+
+                //Scanner sc = new Scanner(System.in);
+                
+                boolean terminado = false;
+                //while (!terminado) {
+                    String linea = in.nextLine( );
+                    String[] palabras = linea.split(" ");
+
+                    String ruta = determinaRuta( );
+                    String[] lista = listarArchivos(ruta);
+                    ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
+                    if (!listaFiltrada.isEmpty( )) {
+                        String deseaAbrirOtro = "1";
+                        do {
+                            mostrarLista(listaFiltrada, out);
+                            String opcion = in.nextLine( );
+                            abrirArchivo(listaFiltrada, opcion, ruta);
+
+                            out.println("Desea abrir otro archivo? (Solo valor numerico)");
+                            out.println("1) SI");
+                            out.println("2) NO");
+                            deseaAbrirOtro = in.nextLine( );
+                        } while (deseaAbrirOtro.equals("1"));
+                    } else {
+                        System.out.println("No se encontraron archivos con la palabra buscada.");
+                    }
+                //}
+                
+            } finally {
+                entrante.close( );
+                System.out.println("Hilo " + contador + " finalizado.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace( );
         }
     }
     
@@ -195,23 +235,25 @@ public class ManejadorHilos {
     }
     
     /* Metodo para mostrar lista filtrada */
-    public static void mostrarLista(ArrayList<String> lista) {
+    public static void mostrarLista(ArrayList<String> lista, PrintWriter out) {
         if (!lista.isEmpty( )) {
+            out.println(lista.size( ));
             for (int i = 0; i < lista.size( ); ++i) {
-                System.out.println(i + ") " + lista.get(i));
+                out.println(i + ") " + lista.get(i));
             }
+            out.println("Ingrese el indice del documento que desea abrir:");
         }
-        System.out.println("\nIngrese el índice del documento que desea abrir:");
     }
 
     /* Metodo para abrir archivo seleccionado */
-    public static void abrirArchivo(ArrayList<String> listaFiltrada, int opcion, String ruta) {
-        if (opcion < 0 || opcion > listaFiltrada.size( )) {
+    public static void abrirArchivo(ArrayList<String> listaFiltrada, String opcion, String ruta) {
+        int op = Integer.parseInt(opcion);
+        if (op < 0 || op > listaFiltrada.size( )) {
             System.out.println("Opcion no valida");
         }
         
         try {
-            File archivo = new File(ruta + "/" + listaFiltrada.get(opcion));
+            File archivo = new File(ruta + "/" + listaFiltrada.get(op));
             Desktop.getDesktop( ).open(archivo);
         } catch (IOException ex) {
             ex.printStackTrace( );
