@@ -14,16 +14,25 @@ public class ClienteHilos {
             Scanner entrada = new Scanner(conexion.getInputStream( ));
             Scanner teclado = new Scanner(System.in);
             
-            System.out.println(entrada.nextLine( ));
-            boolean sigue = true;
-            //while (sigue) {
+            int opcionBuscando = 1;
+            do {
+                System.out.println(entrada.nextLine( ));
+                
                 String palabra = teclado.nextLine( );
+                while (palabra.isEmpty( )) palabra = teclado.nextLine( );
+                
                 salida.println(palabra);
                 
                 int opcion = 1;
                 do {
-                    String tamano = entrada.nextLine( );
+                    String tamano = entrada.nextLine( );                        
                     int tam = Integer.parseInt(tamano);
+                    if (tam == 0) {
+                        String mensajeListaVacia = entrada.nextLine( );
+                        System.out.println(mensajeListaVacia);
+                        break;
+                    }
+                    
                     for (int k = 0; k < tam; ++k) {
                         String lineaMenu = entrada.nextLine( );
                         System.out.println(lineaMenu);
@@ -42,7 +51,14 @@ public class ClienteHilos {
                     opcion = teclado.nextInt( );
                     salida.println(opcion);
                 } while (opcion == 1);
-            //}
+                
+                String seguirBuscando = entrada.nextLine( );
+                String siSeguirBuscando = entrada.nextLine( );
+                String noSeguirBuscando = entrada.nextLine( );
+                System.out.println(seguirBuscando + "\n" + siSeguirBuscando + "\n" + noSeguirBuscando);
+                opcionBuscando = teclado.nextInt( );
+                salida.println(opcionBuscando);
+            } while (opcionBuscando == 1);
             
             entrada.close( );
             salida.close( );

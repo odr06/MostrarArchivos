@@ -37,21 +37,21 @@ public class ManejadorHilos implements Runnable {
             try {
                 InputStream secuenciaEntrada = entrante.getInputStream( );
                 OutputStream secuenciaSalida = entrante.getOutputStream( );
-
-                Scanner in = new Scanner(secuenciaEntrada);
-                PrintWriter out = new PrintWriter(secuenciaSalida, true);
-                out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
-
-                //Scanner sc = new Scanner(System.in);
                 
-                boolean terminado = false;
-                //while (!terminado) {
+                String hacerOtraBusqueda = "1";
+                do {
+                    Scanner in = new Scanner(secuenciaEntrada);
+                    PrintWriter out = new PrintWriter(secuenciaSalida, true);
+                    
+                    out.println("Ingrese la(s) palabra(s) desea buscar, separadas por un espacio?");
+                    
                     String linea = in.nextLine( );
                     String[] palabras = linea.split(" ");
 
                     String ruta = determinaRuta( );
                     String[] lista = listarArchivos(ruta);
                     ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
+                    out.println(listaFiltrada.size( ));
                     if (!listaFiltrada.isEmpty( )) {
                         String deseaAbrirOtro = "1";
                         do {
@@ -65,9 +65,14 @@ public class ManejadorHilos implements Runnable {
                             deseaAbrirOtro = in.nextLine( );
                         } while (deseaAbrirOtro.equals("1"));
                     } else {
-                        System.out.println("No se encontraron archivos con la palabra buscada.");
+                        out.println("No se encontraron archivos con la palabra buscada.");
                     }
-                //}
+                    
+                    out.println("Desea hacer otra busqueda? (Solo valor numerico)");
+                    out.println("1) SI");
+                    out.println("2) NO");
+                    hacerOtraBusqueda = in.nextLine( );
+                } while (hacerOtraBusqueda.equals("1"));
                 
             } finally {
                 entrante.close( );
@@ -237,7 +242,6 @@ public class ManejadorHilos implements Runnable {
     /* Metodo para mostrar lista filtrada */
     public static void mostrarLista(ArrayList<String> lista, PrintWriter out) {
         if (!lista.isEmpty( )) {
-            out.println(lista.size( ));
             for (int i = 0; i < lista.size( ); ++i) {
                 out.println(i + ") " + lista.get(i));
             }
