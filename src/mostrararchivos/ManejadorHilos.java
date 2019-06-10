@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -271,14 +272,15 @@ public class ManejadorHilos implements Runnable {
     
     public static void enviarArchivo(File archivo, Socket socket) {
         FileInputStream fis;
-        BufferedOutputStream out;
+        DataOutputStream out;
         try {
             fis = new FileInputStream(archivo);
-            out = new BufferedOutputStream(socket.getOutputStream());
+            out = new DataOutputStream(socket.getOutputStream());
             int bytesLenght = (int) archivo.length();
+            System.out.println("BYTES: " + bytesLenght);
             byte[] buffer = new byte[bytesLenght];
             fis.read(buffer);
-            out.write(bytesLenght);
+            out.writeInt(bytesLenght);
             out.write(buffer, 0, bytesLenght);
             out.close( );
             fis.close( );

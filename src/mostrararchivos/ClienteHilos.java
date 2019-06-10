@@ -3,6 +3,7 @@ package mostrararchivos;
 import java.awt.Desktop;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -101,9 +102,9 @@ public class ClienteHilos {
     public static void recibeArchivo(String nombreArchivo, Socket socket) throws FileNotFoundException, IOException {
         File archivo = new File(nombreArchivo);
         FileOutputStream fos = new FileOutputStream(archivo);
-        BufferedInputStream is = new BufferedInputStream(socket.getInputStream());
+        DataInputStream is = new DataInputStream(socket.getInputStream());
         try {
-            int bytesLength = is.read();
+            int bytesLength = is.readInt();
             byte[] buffer = new byte[bytesLength];
             is.read(buffer, 0, bytesLength);
             fos.write(buffer);
