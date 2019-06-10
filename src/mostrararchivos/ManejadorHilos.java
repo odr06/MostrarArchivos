@@ -87,7 +87,8 @@ public class ManejadorHilos implements Runnable {
     /* Metodo para determinar ruta */
     public static String determinaRuta( ) {
         String ruta = System.getProperty("user.dir");
-        ruta += "/src/mostrararchivos/Archivos";
+        System.out.println("Ruta parcial: " + ruta);
+        ruta += "\\src\\mostrararchivos\\Archivos";
         return ruta;
     }
     
@@ -114,7 +115,7 @@ public class ManejadorHilos implements Runnable {
     
     /* Metodo para determinar tipo de documento */
     public static int determinaTipo(String nombre, String ruta) {
-        String archivo = new File(ruta + "/" + nombre).getName( );
+        String archivo = new File(ruta + "\\" + nombre).getName( );
         int punto = archivo.lastIndexOf('.');
         String ext = (punto == -1 ? "" : archivo.substring(punto + 1));
         
@@ -161,7 +162,7 @@ public class ManejadorHilos implements Runnable {
     public static boolean analizaTexto(String nombre, String ruta, String[] palabraBuscada) {
         int contPalabras = 0;
         try {
-            FileReader archivo = new FileReader(ruta + "/" + nombre);
+            FileReader archivo = new FileReader(ruta + "\\" + nombre);
             BufferedReader br = new BufferedReader(archivo);
             Map<String, Boolean> seen = llenaSeen(palabraBuscada);
             
@@ -189,7 +190,7 @@ public class ManejadorHilos implements Runnable {
     public static boolean analizaDocx(String nombre, String ruta, String[] palabraBuscada) {
         int contPalabras = 0;
         try {
-            File archivo = new File(ruta + "/" + nombre);
+            File archivo = new File(ruta + "\\" + nombre);
             FileInputStream fis = new FileInputStream(archivo.getAbsolutePath( ));
             XWPFDocument documento = new XWPFDocument(fis);
             Map<String, Boolean> seen = llenaSeen(palabraBuscada);
@@ -218,7 +219,7 @@ public class ManejadorHilos implements Runnable {
     public static boolean analizaPDF(String nombre, String ruta, String[] palabraBuscada) {
         int contPalabras = 0;
         try {
-            PDDocument documento = PDDocument.load(new File(ruta + "/" + nombre));
+            PDDocument documento = PDDocument.load(new File(ruta + "\\" + nombre));
             PDFTextStripper stripper = new PDFTextStripper( );
             String texto = stripper.getText(documento);
             String[] palabras = texto.split("[^a-zA-Z0-9]+");
@@ -258,7 +259,7 @@ public class ManejadorHilos implements Runnable {
         }
         
         try {
-            File archivo = new File(ruta + "/" + listaFiltrada.get(op));
+            File archivo = new File(ruta + "\\" + listaFiltrada.get(op));
             Desktop.getDesktop( ).open(archivo);
         } catch (IOException ex) {
             ex.printStackTrace( );

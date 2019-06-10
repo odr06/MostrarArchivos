@@ -14,7 +14,7 @@ public class ClienteHilos {
             Scanner entrada = new Scanner(conexion.getInputStream( ));
             Scanner teclado = new Scanner(System.in);
             
-            int opcionBuscando = 1;
+            String opcionBuscando = "1";
             do {
                 System.out.println(entrada.nextLine( ));
                 
@@ -23,10 +23,10 @@ public class ClienteHilos {
                 
                 salida.println(palabra);
                 
-                int opcion = 1;
+                String opcion = "1";
                 do {
-                    String tamano = entrada.nextLine( );                        
-                    int tam = Integer.parseInt(tamano);
+                    String tamano = entrada.nextLine( );
+                    int tam = Integer.valueOf(tamano);
                     if (tam == 0) {
                         String mensajeListaVacia = entrada.nextLine( );
                         System.out.println(mensajeListaVacia);
@@ -48,17 +48,19 @@ public class ClienteHilos {
                     String siSeguirAbriendo = entrada.nextLine( );
                     String noSeguirAbriendo = entrada.nextLine( );
                     System.out.println(seguirAbriendo + "\n" + siSeguirAbriendo + "\n" + noSeguirAbriendo);
-                    opcion = teclado.nextInt( );
+                    opcion = teclado.nextLine( );
+                    while (opcion.isEmpty( )) opcion = teclado.nextLine( );
                     salida.println(opcion);
-                } while (opcion == 1);
+                } while (opcion.equals("1"));
                 
                 String seguirBuscando = entrada.nextLine( );
                 String siSeguirBuscando = entrada.nextLine( );
                 String noSeguirBuscando = entrada.nextLine( );
                 System.out.println(seguirBuscando + "\n" + siSeguirBuscando + "\n" + noSeguirBuscando);
-                opcionBuscando = teclado.nextInt( );
+                opcionBuscando = teclado.nextLine( );
+                while (opcionBuscando.isEmpty( )) opcionBuscando = teclado.nextLine( );
                 salida.println(opcionBuscando);
-            } while (opcionBuscando == 1);
+            } while (opcionBuscando.equals("1"));
             
             entrada.close( );
             salida.close( );
