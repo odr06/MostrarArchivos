@@ -271,20 +271,17 @@ public class ManejadorHilos implements Runnable {
     
     public static void enviarArchivo(File archivo, Socket socket) {
         FileInputStream fis;
-        BufferedInputStream bis;
         BufferedOutputStream out;
-        byte[] buffer = new byte[8192];
         try {
             fis = new FileInputStream(archivo);
-            bis = new BufferedInputStream(fis);
             out = new BufferedOutputStream(socket.getOutputStream());
-            int cont;
-            while ((cont = bis.read(buffer)) > 0) {
-                out.write(buffer, 0, cont);
-            }
+            int bytesLenght = (int) archivo.length();
+            byte[] buffer = new byte[bytesLenght];
+            fis.read(buffer);
+            out.write(bytesLenght);
+            out.write(buffer, 0, bytesLenght);
             out.close( );
             fis.close( );
-            bis.close( );
         } catch (IOException e) {
             e.printStackTrace( );
         }
