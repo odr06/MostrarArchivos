@@ -276,7 +276,6 @@ public class ManejadorHilos implements Runnable {
             fis = new FileInputStream(archivo);
             out = new DataOutputStream(socket.getOutputStream());
             int bytesLenght = (int) archivo.length();
-            System.out.println("BYTES: " + bytesLenght);
             byte[] buffer = new byte[bytesLenght];
             fis.read(buffer);
             out.writeInt(bytesLenght);
