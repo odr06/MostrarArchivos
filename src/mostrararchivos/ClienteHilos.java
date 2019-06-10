@@ -63,9 +63,9 @@ public class ClienteHilos {
                         System.out.println("No Existe!");
                     }
                     
-                    String seguirAbriendo = entrada.nextLine( ); while (seguirAbriendo.isEmpty( )) seguirAbriendo = entrada.nextLine( );
-                    String siSeguirAbriendo = entrada.nextLine( ); while (siSeguirAbriendo.isEmpty( )) siSeguirAbriendo = entrada.nextLine( );
-                    String noSeguirAbriendo = entrada.nextLine( ); while (noSeguirAbriendo.isEmpty( )) noSeguirAbriendo = entrada.nextLine( );
+                    String seguirAbriendo = entrada.nextLine( ); //while (seguirAbriendo.isEmpty( )) seguirAbriendo = entrada.nextLine( );
+                    String siSeguirAbriendo = entrada.nextLine( ); //while (siSeguirAbriendo.isEmpty( )) siSeguirAbriendo = entrada.nextLine( );
+                    String noSeguirAbriendo = entrada.nextLine( ); //while (noSeguirAbriendo.isEmpty( )) noSeguirAbriendo = entrada.nextLine( );
                     System.out.println(seguirAbriendo + "\n" + siSeguirAbriendo + "\n" + noSeguirAbriendo);
                     
                     opcion = teclado.nextLine( );
