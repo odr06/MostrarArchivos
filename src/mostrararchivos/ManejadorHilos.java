@@ -66,7 +66,6 @@ public class ManejadorHilos implements Runnable {
                             File file = new File(ruta + "\\" + listaFiltrada.get(Integer.parseInt(opcion)));
                             out.println(file.getName( ));
                             enviarArchivo(file, entrante);
-
                             out.println("Desea abrir otro archivo? (Solo valor numerico)");
                             out.println("1) SI");
                             out.println("2) NO");
@@ -282,7 +281,6 @@ public class ManejadorHilos implements Runnable {
             fis.read(buffer);
             out.writeInt(bytesLenght);
             out.write(buffer, 0, bytesLenght);
-            out.close( );
             fis.close( );
         } catch (IOException e) {
             e.printStackTrace( );
@@ -290,3 +288,4 @@ public class ManejadorHilos implements Runnable {
     }
     
 }
+

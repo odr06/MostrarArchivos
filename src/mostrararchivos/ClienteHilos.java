@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class ClienteHilos {
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try {
             Socket conexion = new Socket("localhost", 1234);
             
@@ -61,9 +61,10 @@ public class ClienteHilos {
                     } else {
                         System.out.println("No Existe!");
                     }
-                    String seguirAbriendo = entrada.nextLine( ); //while (seguirAbriendo.isEmpty( )) seguirAbriendo = entrada.nextLine( );
-                    String siSeguirAbriendo = entrada.nextLine( ); //while (siSeguirAbriendo.isEmpty( )) siSeguirAbriendo = entrada.nextLine( );
-                    String noSeguirAbriendo = entrada.nextLine( ); //while (noSeguirAbriendo.isEmpty( )) noSeguirAbriendo = entrada.nextLine( );
+                    String seguirAbriendo = null, siSeguirAbriendo = null, noSeguirAbriendo = null;
+                    seguirAbriendo = entrada.nextLine( );
+                    siSeguirAbriendo = entrada.nextLine( ); //while (siSeguirAbriendo.isEmpty( )) siSeguirAbriendo = entrada.nextLine( );
+                    noSeguirAbriendo = entrada.nextLine( ); //while (noSeguirAbriendo.isEmpty( )) noSeguirAbriendo = entrada.nextLine( );
                     System.out.println(seguirAbriendo + "\n" + siSeguirAbriendo + "\n" + noSeguirAbriendo);
                     opcion = teclado.nextLine( );
                     while (opcion.isEmpty( )) opcion = teclado.nextLine( );
@@ -109,9 +110,9 @@ public class ClienteHilos {
             is.read(buffer, 0, bytesLength);
             fos.write(buffer);
             fos.close( );
-            is.close( );
         } catch (IOException e) {
             e.printStackTrace( );
         }
     }
 }
+
