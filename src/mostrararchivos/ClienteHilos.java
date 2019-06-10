@@ -1,6 +1,8 @@
 package mostrararchivos;
 
+import java.awt.Desktop;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +11,14 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClienteHilos {
+    
     public static void main(String[] args) {
         try {
             Socket conexion = new Socket("localhost", 1234);
-            InputStream is;
-            FileOutputStream fos;
-            BufferedOutputStream bos;
-            int bufferSize;
+            InputStream is = null;
+            FileOutputStream fos = null;
+            BufferedOutputStream bos = null;
+            int bufferSize = 0;
             
             PrintWriter salida = new PrintWriter(conexion.getOutputStream( ), true);
             Scanner entrada = new Scanner(conexion.getInputStream( ));
@@ -52,11 +55,17 @@ public class ClienteHilos {
                     while (opcionAbrir.isEmpty( )) opcionAbrir = teclado.nextLine( );
                     salida.println(opcionAbrir);
                     
+                    String nombreArchivo = entrada.nextLine( );
+                    recibeArchivo(nombreArchivo, conexion, is, fos, bos, bufferSize);
+                    if (new File(nombreArchivo).isFile( )) {
+                        Desktop.getDesktop( ).open(new File(nombreArchivo));
+                    } else {
+                        System.out.println("No Existe!");
+                    }
                     
-                    
-                    String seguirAbriendo = entrada.nextLine( );
-                    String siSeguirAbriendo = entrada.nextLine( );
-                    String noSeguirAbriendo = entrada.nextLine( );
+                    String seguirAbriendo = entrada.nextLine( ); //while (seguirAbriendo.isEmpty( )) seguirAbriendo = entrada.nextLine( );
+                    String siSeguirAbriendo = entrada.nextLine( ); //while (siSeguirAbriendo.isEmpty( )) siSeguirAbriendo = entrada.nextLine( );
+                    String noSeguirAbriendo = entrada.nextLine( ); //while (noSeguirAbriendo.isEmpty( )) noSeguirAbriendo = entrada.nextLine( );
                     System.out.println(seguirAbriendo + "\n" + siSeguirAbriendo + "\n" + noSeguirAbriendo);
                     
                     opcion = teclado.nextLine( );
@@ -93,5 +102,22 @@ public class ClienteHilos {
         return res;
     }
     
-    
+    public static void recibeArchivo(String nombreArchivo, Socket socket, InputStream is, FileOutputStream fos, BufferedOutputStream bos, int bufferSize) {
+        try {
+            is = socket.getInputStream( );
+            bufferSize = socket.getReceiveBufferSize( );
+            
+            fos = new FileOutputStream(nombreArchivo);
+            bos = new BufferedOutputStream(fos);
+            byte[] bytes = new byte[bufferSize];
+            int cont;
+            while ((cont = is.read(bytes)) >= 0) {
+                bos.write(bytes, 0, cont);
+            }
+            bos.close( );
+            is.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
+        }
+    }
 }

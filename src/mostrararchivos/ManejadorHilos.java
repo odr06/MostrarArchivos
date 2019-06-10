@@ -1,6 +1,8 @@
 package mostrararchivos;
 
 import java.awt.Desktop;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,7 +61,10 @@ public class ManejadorHilos implements Runnable {
                         do {
                             mostrarLista(listaFiltrada, out);
                             String opcion = in.nextLine( );
-                            abrirArchivo(listaFiltrada, opcion, ruta);
+                            //abrirArchivo(listaFiltrada, opcion, ruta);
+                            File file = new File(ruta + "\\" + listaFiltrada.get(Integer.parseInt(opcion)));
+                            out.println(file.getName( ));
+                            enviarArchivo(file, entrante);
 
                             out.println("Desea abrir otro archivo? (Solo valor numerico)");
                             out.println("1) SI");
@@ -89,7 +94,6 @@ public class ManejadorHilos implements Runnable {
     public static String determinaRuta( ) {
         String ruta = System.getProperty("user.dir");
         ruta += "\\src\\mostrararchivos\\Archivos";
-        System.out.println("Ruta parcial: " + ruta);
         return ruta;
     }
     
@@ -262,6 +266,27 @@ public class ManejadorHilos implements Runnable {
             Desktop.getDesktop( ).open(archivo);
         } catch (IOException ex) {
             ex.printStackTrace( );
+        }
+    }
+    
+    public static void enviarArchivo(File archivo, Socket socket) {
+        FileInputStream fis;
+        BufferedInputStream bis;
+        BufferedOutputStream out;
+        byte[] buffer = new byte[8192];
+        try {
+            fis = new FileInputStream(archivo);
+            bis = new BufferedInputStream(fis);
+            out = new BufferedOutputStream(socket.getOutputStream());
+            int cont;
+            while ((cont = bis.read(buffer)) > 0) {
+                out.write(buffer, 0, cont);
+            }
+            out.close( );
+            fis.close( );
+            bis.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
         }
     }
     
