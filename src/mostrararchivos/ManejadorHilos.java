@@ -45,13 +45,14 @@ public class ManejadorHilos implements Runnable {
                     
                     out.println("Ingrese la(s) palabra(s) desea buscar (separadas por un espacio)");
                     
-                    String linea = in.nextLine( );
+                    String linea = in.nextLine( ).toLowerCase( );
                     System.out.println("Palabra(s) a buscar: " + linea);
                     String[] palabras = linea.split(" ");
 
                     String ruta = determinaRuta( );
                     String[] lista = listarArchivos(ruta);
                     ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
+                    
                     out.println(listaFiltrada.size( ));
                     if (!listaFiltrada.isEmpty( )) {
                         String deseaAbrirOtro = "1";
@@ -87,8 +88,8 @@ public class ManejadorHilos implements Runnable {
     /* Metodo para determinar ruta */
     public static String determinaRuta( ) {
         String ruta = System.getProperty("user.dir");
-        System.out.println("Ruta parcial: " + ruta);
         ruta += "\\src\\mostrararchivos\\Archivos";
+        System.out.println("Ruta parcial: " + ruta);
         return ruta;
     }
     
@@ -243,12 +244,10 @@ public class ManejadorHilos implements Runnable {
     
     /* Metodo para mostrar lista filtrada */
     public static void mostrarLista(ArrayList<String> lista, PrintWriter out) {
-        if (!lista.isEmpty( )) {
-            for (int i = 0; i < lista.size( ); ++i) {
-                out.println(i + ") " + lista.get(i));
-            }
-            out.println("Ingrese el indice del documento que desea abrir:");
+        for (int i = 0; i < lista.size( ); ++i) {
+            out.println(i + ") " + lista.get(i));
         }
+        out.println("Ingrese el indice del documento que desea abrir:");
     }
 
     /* Metodo para abrir archivo seleccionado */
