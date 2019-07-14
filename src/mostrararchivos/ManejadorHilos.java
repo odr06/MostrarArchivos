@@ -52,7 +52,7 @@ public class ManejadorHilos implements Runnable {
                     
                     out.println("Ingrese el nombre del archivo que contiene la(s) consulta(s))");
                     
-                    String fileName = in.nextLine( ) + "_c" + Integer.toString(contador) + Integer.toString(consulta++);
+                    String fileName = in.nextLine( ) + "_c" + Integer.toString(contador) + "_q" + Integer.toString(consulta++);
                     
                     recibeArchivo(fileName, entrante);
                     
