@@ -61,7 +61,8 @@ public class ManejadorHilos implements Runnable {
                     String deseaAbrirOtro = "1";
                     do {
                         out.println("Ingrese el nombre del archivo que desee abrir");
-                        File file = new File(determinaRuta() + "\\" + in.nextLine());
+                        String recFile = in.nextLine();
+                        File file = new File(determinaRuta() + "\\" + recFile);
                         out.println(file.getName( ));
                         enviarArchivo(file, entrante);
                         out.println("Desea abrir otro archivo? (Solo valor numerico)");
@@ -317,8 +318,9 @@ public class ManejadorHilos implements Runnable {
             fos = new PrintWriter(new FileWriter(archivow));
             int nline = 1;
             while(fis.hasNextLine()){
-                fos.println("Consulta " + nline++);
-                ArrayList<String> results = searchQuery(fis.nextLine());
+                String q = fis.nextLine();
+                fos.println("Consulta " + nline++ + ": " + q);
+                ArrayList<String> results = searchQuery(q);
                 if (!results.isEmpty( )){
                     for(String r : results){
                         fos.println("\t" + r);
@@ -328,7 +330,7 @@ public class ManejadorHilos implements Runnable {
                 }
             }
             fis.close();
-            fos.close();
+            fos.close();     
             enviarArchivo(new File("Servidor//" + file_res), this.entrante);
         } catch (IOException e) {
             e.printStackTrace( );

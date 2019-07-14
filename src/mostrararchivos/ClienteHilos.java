@@ -37,11 +37,11 @@ public class ClienteHilos {
                 File sendFile = new File("Cliente//" + fileName);
                 enviarArchivo(sendFile, conexion);
                 
+                String fileResults = "result_" + fileName;
+                recibeArchivo(fileResults, conexion);
+
                 String opcion = "1";
                 do {
-                    String fileResults = entrada.nextLine( );
-                    recibeArchivo(fileResults, conexion);
-
                     imprimeResults(fileResults);
 
                     System.out.println(entrada.nextLine( ));

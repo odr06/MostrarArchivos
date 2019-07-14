@@ -1,13 +1,13 @@
-Consulta 1: hola
+Consulta 1
 	archivo1.txt
 	archivo2.txt
 	archivo3.html
 	archivo4.docx
 	archivo5.pdf
 	archivo6.xml
-Consulta 2: hola como
+Consulta 2
 	No se encontraron archivos con la palabra buscada.
-Consulta 3: hola soy
+Consulta 3
 	archivo1.txt
 	archivo2.txt
 	archivo3.html
