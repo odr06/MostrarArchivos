@@ -3,7 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/alejandrogy/Documentos/SistemasDistribuidos/Ejemplos/MostrarArchivos/src/mostrararchivos/MostrarArchivos.java</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/Servidor/consulta.txt_c10</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/Cliente/consulta.txt</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/Servidor/consulta.txt_c10_results.txt</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/src/mostrararchivos/ClienteHilos.java</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/src/mostrararchivos/ServidorEcoConHilos.java</file>
+            <file>file:/C:/Users/oscar/Documents/GitHub/MostrarArchivos/src/mostrararchivos/ManejadorHilos.java</file>
         </group>
     </open-files>
 </project-private>

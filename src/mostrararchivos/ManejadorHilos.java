@@ -4,11 +4,14 @@ import java.awt.Desktop;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +32,7 @@ public class ManejadorHilos implements Runnable {
     
     private Socket entrante;
     private int contador;
+    private int consulta = 0;
     
     public ManejadorHilos(Socket i, int c) {
         entrante = i;
@@ -46,34 +50,25 @@ public class ManejadorHilos implements Runnable {
                     Scanner in = new Scanner(secuenciaEntrada);
                     PrintWriter out = new PrintWriter(secuenciaSalida, true);
                     
-                    out.println("Ingrese la(s) palabra(s) desea buscar (separadas por un espacio)");
+                    out.println("Ingrese el nombre del archivo que contiene la(s) consulta(s))");
                     
-                    String linea = in.nextLine( ).toLowerCase( );
-                    System.out.println("Palabra(s) a buscar: " + linea);
-                    String[] palabras = linea.split(" ");
-
-                    String ruta = determinaRuta( );
-                    String[] lista = listarArchivos(ruta);
-                    ArrayList<String> listaFiltrada = filtrarArchivos(palabras, lista, ruta);
+                    String fileName = in.nextLine( ) + "_c" + Integer.toString(contador) + Integer.toString(consulta++);
                     
-                    out.println(listaFiltrada.size( ));
-                    if (!listaFiltrada.isEmpty( )) {
-                        String deseaAbrirOtro = "1";
-                        do {
-                            mostrarLista(listaFiltrada, out);
-                            String opcion = in.nextLine( );
-                            //abrirArchivo(listaFiltrada, opcion, ruta);
-                            File file = new File(ruta + "\\" + listaFiltrada.get(Integer.parseInt(opcion)));
-                            out.println(file.getName( ));
-                            enviarArchivo(file, entrante);
-                            out.println("Desea abrir otro archivo? (Solo valor numerico)");
-                            out.println("1) SI");
-                            out.println("2) NO");
-                            deseaAbrirOtro = in.nextLine( );
-                        } while (deseaAbrirOtro.equals("1"));
-                    } else {
-                        out.println("No se encontraron archivos con la palabra buscada.");
-                    }
+                    recibeArchivo(fileName, entrante);
+                    
+                    sendQuery(fileName);
+                    
+                    String deseaAbrirOtro = "1";
+                    do {
+                        out.println("Ingrese el nombre del archivo que desee abrir");
+                        File file = new File(determinaRuta() + "\\" + in.nextLine());
+                        out.println(file.getName( ));
+                        enviarArchivo(file, entrante);
+                        out.println("Desea abrir otro archivo? (Solo valor numerico)");
+                        out.println("1) SI");
+                        out.println("2) NO");
+                        deseaAbrirOtro = in.nextLine( );
+                    } while (deseaAbrirOtro.equals("1"));
                     
                     out.println("Desea hacer otra busqueda? (Solo valor numerico)");
                     out.println("1) SI");
@@ -253,6 +248,7 @@ public class ManejadorHilos implements Runnable {
         }
         out.println("Ingrese el indice del documento que desea abrir:");
     }
+    
 
     /* Metodo para abrir archivo seleccionado */
     public static void abrirArchivo(ArrayList<String> listaFiltrada, String opcion, String ruta) {
@@ -281,6 +277,59 @@ public class ManejadorHilos implements Runnable {
             out.writeInt(bytesLenght);
             out.write(buffer, 0, bytesLenght);
             fis.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
+        }
+    }
+    
+    public static void recibeArchivo(String nombreArchivo, Socket socket) throws FileNotFoundException, IOException {
+        File archivo = new File("Servidor//" + nombreArchivo);
+        FileOutputStream fos = new FileOutputStream(archivo);
+        DataInputStream is = new DataInputStream(socket.getInputStream());
+        try {
+            int bytesLength = is.readInt();
+            byte[] buffer = new byte[bytesLength];
+            is.read(buffer, 0, bytesLength);
+            fos.write(buffer);
+            fos.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
+        }
+    }
+    
+    public ArrayList<String> searchQuery(String query) {
+        System.out.println("C" + this.contador + "Palabra(s) a buscar: " + query);
+        String[] palabras = query.split(" ");
+        String ruta = determinaRuta( );
+        String[] lista = listarArchivos(ruta);
+        return filtrarArchivos(palabras, lista, ruta);
+    }
+
+    public void sendQuery(String fileName) {
+        Scanner fis;
+        PrintWriter fos;
+
+        try{
+            String file_res = fileName + "_results.txt";
+            File archivo = new File("Servidor//" + fileName);
+            File archivow = new File("Servidor//" + file_res);
+            fis = new Scanner(archivo);
+            fos = new PrintWriter(new FileWriter(archivow));
+            int nline = 1;
+            while(fis.hasNextLine()){
+                fos.println("Consulta " + nline++);
+                ArrayList<String> results = searchQuery(fis.nextLine());
+                if (!results.isEmpty( )){
+                    for(String r : results){
+                        fos.println("\t" + r);
+                    }
+                }else{
+                    fos.println("\tNo se encontraron archivos con la palabra buscada.");
+                }
+            }
+            fis.close();
+            fos.close();
+            enviarArchivo(new File("Servidor//" + file_res), this.entrante);
         } catch (IOException e) {
             e.printStackTrace( );
         }

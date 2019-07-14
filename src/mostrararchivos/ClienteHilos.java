@@ -4,7 +4,9 @@ import java.awt.Desktop;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,33 +29,24 @@ public class ClienteHilos {
             do {
                 System.out.println(entrada.nextLine( ));
                 
-                String palabra = teclado.nextLine( );
-                while (palabra.isEmpty( )) palabra = teclado.nextLine( );
+                String fileName = teclado.nextLine( );
+                while (fileName.isEmpty( )) fileName = teclado.nextLine( );
                 
-                salida.println(palabra);
+                salida.println(fileName);
+                
+                File sendFile = new File("Cliente//" + fileName);
+                enviarArchivo(sendFile, conexion);
                 
                 String opcion = "1";
-                String tamano = entrada.nextLine( );
                 do {
-                    int tam = toInteger(tamano);
-                    if (tam == 0) {
-                        String mensajeListaVacia = entrada.nextLine( );
-                        System.out.println(mensajeListaVacia);
-                        break;
-                    }
-                    
-                    for (int k = 0; k < tam; ++k) {
-                        String lineaMenu = entrada.nextLine( );
-                        System.out.println(lineaMenu);
-                    }
-                    
-                    String mensajeOpcion = entrada.nextLine( );
-                    System.out.println(mensajeOpcion);
+                    String fileResults = entrada.nextLine( );
+                    recibeArchivo(fileResults, conexion);
 
-                    String opcionAbrir = teclado.nextLine( );
-                    while (opcionAbrir.isEmpty( )) opcionAbrir = teclado.nextLine( );
-                    salida.println(opcionAbrir);
-                    
+                    imprimeResults(fileResults);
+
+                    System.out.println(entrada.nextLine( ));
+                    salida.println(teclado.nextLine( ));
+
                     String nombreArchivo = entrada.nextLine( );
                     recibeArchivo(nombreArchivo, conexion);
                     if (new File(nombreArchivo).isFile( )) {
@@ -100,6 +93,23 @@ public class ClienteHilos {
         return res;
     }
     
+    public static void enviarArchivo(File archivo, Socket socket) {
+        FileInputStream fis;
+        DataOutputStream out;
+        try {
+            fis = new FileInputStream(archivo);
+            out = new DataOutputStream(socket.getOutputStream());
+            int bytesLenght = (int) archivo.length();
+            byte[] buffer = new byte[bytesLenght];
+            fis.read(buffer);
+            out.writeInt(bytesLenght);
+            out.write(buffer, 0, bytesLenght);
+            fis.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
+        }
+    }
+    
     public static void recibeArchivo(String nombreArchivo, Socket socket) throws FileNotFoundException, IOException {
         File archivo = new File(nombreArchivo);
         FileOutputStream fos = new FileOutputStream(archivo);
@@ -110,6 +120,20 @@ public class ClienteHilos {
             is.read(buffer, 0, bytesLength);
             fos.write(buffer);
             fos.close( );
+        } catch (IOException e) {
+            e.printStackTrace( );
+        }
+    }
+
+    public static void imprimeResults(String fileName){
+        Scanner fis;
+        try{
+            File archivo = new File(fileName);
+            fis = new Scanner(archivo);
+            while(fis.hasNextLine()){
+                System.out.println(fis.nextLine());
+            }
+            fis.close();
         } catch (IOException e) {
             e.printStackTrace( );
         }

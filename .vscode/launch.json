@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ClienteHilos",
+            "request": "launch",
+            "mainClass": "mostrararchivos.ClienteHilos",
+            "projectName": "MostrarArchivos_45bfa590"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ServidorEcoConHilos",
+            "request": "launch",
+            "mainClass": "mostrararchivos.ServidorEcoConHilos",
+            "projectName": "MostrarArchivos_45bfa590"
+        }
+    ]
+}
